@@ -1,0 +1,72 @@
+
+
+
+
+
+
+#############################################################################################################################################
+##  *****     *****     *****     *****     RECORTE 1     *****     *****     *****     *****     *****
+#############################################################################################################################################
+
+
+###############################################################################
+##  *****     *****    testClassForRetransmission Class     *****     *****
+###############################################################################
+
+class testClassForRetransmission:
+    """Class for retransmitting from one topic to another for a certain amount of data or time
+    Objects from this class should be instantiated or executed in separated threads to avoid
+    stopping the node when retransmitting."""
+
+
+###############################################
+##  *****     Static Data Members     *****
+###############################################
+    dynSrvTimeout = serviceTimeOut
+    timesLeft = 0
+    publisher_topic = None
+
+
+###############################################
+##  *****     Constructor Method     *****
+###############################################
+    def __init__(self, times, source_topic, output_topic, data_type = UInt16):
+        self.timesLeft = times
+#        if not source_topic in rospy.get_published_topics(namespace='/'):
+#            print "Unable to find %s topic in order to retransmit it"%(source_topic)
+#            return False
+        self.publisher_topic = rospy.Publisher(output_topic, data_type)
+        rospy.Subscriber(source_topic, data_type, callback)
+        ## For "timesLeft" times, a different images is gathered and storaged for the answer
+        while timesLeft > 0:
+            pass
+        return
+
+
+###############################################
+##  *****     More Methods     *****
+###############################################
+    def callback(data):
+        self.publisher_topic.publish(data)
+        self.timesLeft = self.timesLeft - 1
+
+        # 'launchRetransmission' is an ALTERNATIVE to retransmitTopic in order
+        # to repeat a number of messages received from a topic in another one.
+    def launchRetransmission(self, times, source_topic, output_topic, data_type = UInt16):
+        try:
+            rospy.Subscriber("chatter", String, callback)
+        except Exception as e:
+            print "Unable to begin retransmission of %s topic."%(source_topic)
+        print "Trying to retransmit %s in %s."%(source_topic, output_topic)
+        rcvd_msg = rospy.wait_for_message(source_topic, data_type, serviceTimeOut)
+        publisher_topic = rospy.Publisher(output_topic, data_type)
+        try:
+            for i in xrange(0, times):
+                publisher_topic.publish(rospy.wait_for_message(source_topic, data_type, serviceTimeOut))
+        except exception as e:
+            print "Failed while trying to retransmit %s topic in %s."
+        return True
+        rospy.spin()
+
+
+

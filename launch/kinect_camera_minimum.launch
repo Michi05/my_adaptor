@@ -1,0 +1,28 @@
+<launch>
+  <machine name="local" address="localhost"/>
+  <arg name="kinect_dir" default="$(find kinect_camera)" />
+  <node pkg="nodelet" type="nodelet" name="openni_manager" args="manager" output="screen">
+    <rosparam>
+      # Rule of thumb: at least one worker thread per nodelet loaded into
+      # the manager
+      num_worker_threads: 2
+      </rosparam>
+  </node>
+ 
+
+  <!-- By default, calibrations are stored to file://${ROS_HOME}/camera_info/${NAME}.yaml,
+       where ${NAME} is of the form "[rgb|depth]_[serial#]", e.g. "depth_B00367707227042B".
+       See camera_info_manager docs for calibration URL details. -->
+  <arg name="rgb_camera_info_url"   default="" />
+  <arg name="depth_camera_info_url" default="" />
+ 
+  <node pkg="nodelet" type="nodelet" name="openni_camera" args="load openni_camera/OpenNINodelet openni_manager">
+    <remap from="camera" to="kinect" />
+    <param name="device_id" value="#1" /> <!-- use first enumerated device -->
+    <rosparam command="load" file="$(find openni_camera)/info/openni_params.yaml" />
+    <param name="rgb_frame_id" value="openniCamera/openni_rgb_optical_frame" />
+    <param name="depth_frame_id" value="openniCamera/openni_depth_optical_frame" />
+    <param name="use_indices" value="true" />
+  </node>
+
+</launch>

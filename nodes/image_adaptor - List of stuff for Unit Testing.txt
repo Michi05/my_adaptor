@@ -1,0 +1,237 @@
+
+
+        List of stuff for unit testing
+
+** the "is_published" method and the ones that use it are not really reliable right now
+
+** Functions inside of the code??
+
+class img_interface_node
+    changeSelfParameters(self, dynConfiguration, avoidPropagation=True)
+        This method is responsible for changing the node's own dynamic reconfigure parameters
+        from its own code ***but avoiding a chain of uncontrolled callbacks!!.
+        It returns True if everything went as expected.
+
+    dynServerCallback(self, dynConfiguration, levelCode)
+        Handler for the changes in the Dynamic Reconfigure server
+        Must return a configuration in the same format as received.
+
+    getAnyProperty(self, propertyName)
+        Generic getter in order to redirect to the type-specific getter method.
+
+    getBoolProperty(self, srvMsg)
+
+    getDispImage(self, srvMsg)
+
+    getFixedTypeProperty(self, propertyName, valueType)
+        Main property getter receiving the property name and the value type
+        and returning the current value from the low level driver.
+
+    getFloatProperty(self, srvMsg)
+
+    getImage(self, srvMsg)
+
+    getIntProperty(self, srvMsg)
+
+    getStringProperty(self, srvMsg)
+        # Generic getter in order to redirect to the appropriate method
+        #Specific fixed type property getters
+
+    get_property_list(self)
+        Auxiliary method for receiving the list of properties known by the translator.
+
+    listenToRequests(self)
+        Main services creator method in order to remain listening for requests.
+        It receives nothing and returns true just for future needs.
+
+    publishDispImages(self, srvMsg)
+        Specific purpose method meant to retransmit a disparity image topic on a specific topic
+        path receiving the original path, the new path and the amount of messages. It returns a
+        message telling if it worked.
+
+    publishImages(self, srvMsg)
+        Specific purpose method meant to retransmit an image topic on a specific topic
+        path receiving the original path, the new path and the amount of messages. It returns
+        a message telling if it worked.
+
+    setAnyProperty(self, propertyName, newValue)
+        Generic setter in order to redirect to the type-specific setter method.
+
+    setBoolProperty(self, setIntMsg)
+
+    setFixedTypeProperty(self, propertyName, newValue, valueType)
+        Main property setter receiving the property name, the value to assign and its type
+        and returning the response from the "setParameter" method from the low level driver.
+
+    setFloatProperty(self, setIntMsg)
+
+    setIntProperty(self, setIntMsg)
+
+    setStrProperty(self, setStrMsg)
+
+    setTopicLocation(self, setStrMsg)
+
+
+
+
+
+
+
+
+class manager3D
+    callService(service, arguments, valueType=<class 'image_adaptor.srv._stringValue.stringValue'>)
+
+    dynClientCallback(self, dynConfiguration)
+
+    getParameter(self, paramName)
+
+    getTopic(self, topicName, data_type=<type 'str'>)
+
+    relocateTopic(self, oldAddress, newAddress)
+        This very important method is meant to change the topics from one name (or address) to another in runtime.
+        Since that not possible in a literal way; "mux" tool is used to repeat them under the new name/address.
+         
+        ## TODO: Watch Out: in the first version, each change becomes a new node
+        ##while it should change the existing when possible.
+         
+        ### Here's a next step when they complete there project >>> callService("rosspawn/start", "")
+
+    retransmitTopic(self, times, source_topic, output_topic, data_type=<class 'std_msgs.msg._UInt16.UInt16'>)
+        Method meant to be executed in a different thread in order
+        to repeat a number of messages received from a topic to another one.
+
+    sendByTopic(self, topic, value, data_type=<class 'std_msgs.msg._UInt16.UInt16'>)
+
+    setParameter(self, paramName, newValue)
+
+    Static methods defined here:
+
+    topicExists(topicName)
+
+
+class propertyTranslator
+    canGet(self, propertyName)
+        Receives the name of a property and decides weather if it can be Getted or not.
+
+    canSet(self, propertyName)
+        Receives the name of a property and decides whether if it can be Setted or not.
+
+    change(self, propertyName, newValue)
+
+    getTopicPath(self, topicName)
+        Method to get the path of a certain topic.
+        If the given name exists as a topic; the name is returned,
+        otherwise, the name is translated with the dictionary.
+
+    get_param_relative(propName)
+        Translation utility for getting the relative path to a property (without the local namespace).
+
+    get_property_list(self)
+        Method that returns the complete list of properties.
+
+    interpret(self, propertyName)
+        Receives the fixed name of the property and
+        translates it into the needed data to read it.
+
+    list_of_dynamic_servers(self)
+        Method that returns the complete list of servers in
+        which the parameters are distributed.
+
+    readYAMLConfig(self, file_name)
+        This method receives a file_name in which to read the properties.
+        Returned Value MUST be a tuple of two lists with strings and
+        dictionaries respectively.
+
+    reverseInterpret(self, reverseProperty)
+
+
+
+****************************************************************
+****************************************************************
+****************************************************************
+****************************************************************
+****************************************************************
+****************************************************************
+****************************************************************
+
+
+
+**Parameters that should work:
+( In the form:
+'camera/driver/':
+parameter_generic_name:
+  - parameter/COMPLETE/name ## (Inside of the driver and including the path which is needed for finding it)
+  - int ## Type
+  - dynParam ## Kind
+
+    Name:
+        name
+        name/
+        path/subname/name
+        path/subname/name/
+    Type:
+        int
+        float
+        string
+        ...
+    Kind:
+        parameter (dynParam)
+        topic (name)
+        topic (parameter to change???)
+        service???
+
+**Parameters read from files:
+    The ones included above
+    Plus the changing topics
+    Virtual parameters?!
+
+**Available services from the interface:
+    /robot1/kinect1/get/TopicLocation
+    /robot1/kinect1/getBoolProperty
+    /robot1/kinect1/getDispImage
+    /robot1/kinect1/getFloatProperty
+    /robot1/kinect1/getImage
+    /robot1/kinect1/getIntProperty
+    /robot1/kinect1/getStringProperty
+
+    /robot1/kinect1/set/TopicLocation
+    /robot1/kinect1/setBoolProperty
+    /robot1/kinect1/setFloatProperty
+    /robot1/kinect1/setIntProperty
+    /robot1/kinect1/setStrProperty
+
+    /robot1/kinect1/publishDispImages
+    /robot1/kinect1/publishImages
+
+
+ ***** NON of my bussiness but can be important *****
+
+nodelets used by the driver:
+[
+    '/robot1/kinect1/camera/depth/metric',
+    '/robot1/kinect1/camera/depth/metric_rect',
+    '/robot1/kinect1/camera/depth/points',
+    '/robot1/kinect1/camera/depth/rectify_depth',
+    '/robot1/kinect1/camera/depth_registered/metric',
+    '/robot1/kinect1/camera/depth_registered/metric_rect',
+    '/robot1/kinect1/camera/depth_registered/rectify_depth',
+    '/robot1/kinect1/camera/disparity_depth',
+    '/robot1/kinect1/camera/disparity_depth_registered',
+    '/robot1/kinect1/camera/driver',
+    '/robot1/kinect1/camera/ir/rectify_ir',
+    '/robot1/kinect1/camera/points_xyzrgb_depth_rgb',
+    '/robot1/kinect1/camera/register_depth_rgb',
+    '/robot1/kinect1/camera/rgb/debayer',
+    '/robot1/kinect1/camera/rgb/rectify_color',
+    '/robot1/kinect1/camera/rgb/rectify_mono'
+]
+
+services from the driver:
+    /robot1/kinect1/camera/ir/set_camera_info
+    /robot1/kinect1/camera/rgb/set_camera_info
+    /robot1/kinect1/camera_nodelet_manager/list
+    /robot1/kinect1/camera_nodelet_manager/load_nodelet
+    /robot1/kinect1/camera_nodelet_manager/tf_frames
+    /robot1/kinect1/camera_nodelet_manager/unload_nodelet
+
+

@@ -1,0 +1,12 @@
+<launch>
+    <arg name="args" />
+    <arg name="robot_ns" default="robot1" />
+    <arg name="namespace" default="robot1/camera1" />
+    <arg name="node_id" />
+
+    <group ns="$(arg namespace)">
+        <remap from="mux" to="$(arg node_id)"/>
+        <node name="$(arg node_id)" pkg="topic_tools" type="mux" args="$(arg args)" required="true"/>
+    </group>
+</launch>
+

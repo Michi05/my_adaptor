@@ -1,0 +1,19 @@
+
+<!-- This is the robot launcher. For now it just launches the Kinect Camera device and defines the absolute namespace if necessary. -->
+
+<launch>
+  <arg name="robot_ns" default="robot1" />
+  <arg name="absolute_namespace" default="/" /> <!-- launchfile absolute namespace. -->
+<!-- The original absolute path must be known in order for
+the openni driver to work correctly.  -->
+
+  <!-- start the launchfiles and nodes in the robot namespace -->
+  <group ns="$(arg robot_ns)">
+    <!-- launch the Kinect Camera device -->
+    <include file="$(find my_adaptor)/launch/kinectDrivers.launch">
+      <arg name="absolute_namespace" value="$(arg absolute_namespace)/$(arg robot_ns)/" /> <!-- absolute namespace inside of the group -->
+    </include>
+  </group>
+</launch>
+
+

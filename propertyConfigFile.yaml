@@ -1,0 +1,219 @@
+--- ## Where are the services?? the "callService" method feels lonely
+
+#'camera/driver/': # Driver 1: openni # Right now it's MANDATORY to end the paths with '/' but I have to change that in the code while reading
+'':
+  image_mode:
+  - camera/driver/image_mode
+  - int
+  - dynParam
+  depth_mode:
+  - camera/driver/depth_mode
+  - int
+  - dynParam
+  data_skip:
+  - camera/driver/data_skip
+  - int
+  - dynParam
+  z_offset_mm:
+  - camera/driver/z_offset_mm
+  - int
+  - parameter
+
+  depth_registration:
+  - camera/driver/depth_registration
+  - bool
+  - dynParam
+  depth_time_offset:
+  - camera/driver/depth_time_offset
+  - double
+  - dynParam
+  image_time_offset:
+  - camera/driver/image_time_offset
+  - double
+  - dynParam
+
+  depth_ir_offset_x:
+  - camera/driver/depth_ir_offset_x
+  - double
+  - dynParam
+  depth_ir_offset_y:
+  - camera/driver/depth_ir_offset_y
+  - double
+  - dynParam
+
+  device_id:
+  - camera/driver/device_id
+  - string
+  - parameter
+
+
+  # List of image source topics
+  #depthcamera_info,sensor_msgs/CameraInfo,topic
+  depth_disparity:
+  - depth/disparity
+  - stereo_msgs/DisparityImage
+  - topic
+  depth:
+  - depth/image
+  - sensor_msgs/Image
+  - topic
+  depth_raw:
+  - depth/image_raw
+  - sensor_msgs/Image
+  - topic
+  depth_rect:
+  - depth/image_rect
+  - sensor_msgs/Image
+  - topic
+  depth_rect_raw:
+  - depth/image_rect_raw
+  - sensor_msgs/Image
+  - topic
+  depth_points:
+  - depth_pointsdepth/points
+  - sensor_msgs/PointCloud2
+  - topic
+  #depth_registeredcamera_info,sensor_msgs/CameraInfo,topic
+  depth_registered_disparity:
+  - depth_registered/disparity
+  - stereo_msgs/DisparityImage
+  - topic
+  depth_registered:
+  - depth_registered/image
+  - sensor_msgs/Image
+  - topic
+  depth_registered_raw:
+  - depth_registered/image_raw
+  - sensor_msgs/Image
+  - topic
+  depth_registered_rect:
+  - depth_registered/image_rect
+  - sensor_msgs/Image
+  - topic
+  depth_registered_rect_raw:
+  - depth_registered/image_rect_raw
+  - sensor_msgs/Image
+  - topic
+  depth_registered_points:
+  - depth_registered/points
+  - sensor_msgs/PointCloud2
+  - topic
+  #ircamera_info,sensor_msgs/CameraInfo,topic
+  ir_raw:
+  - ir/image_raw
+  - sensor_msgs/Image
+  - topic
+  ir_rect:
+  - ir/image_rect
+  - sensor_msgs/Image
+  - topic
+  #projectorcamera_info,sensor_msgs/CameraInfo,topic
+  #rgbcamera_info,sensor_msgs/CameraInfo,topic
+  rgb_color:
+  - rgb/image_color
+  - sensor_msgs/Image
+  - topic
+  rgb_mono:
+  - rgb/image_mono
+  - sensor_msgs/Image
+  - topic
+  rgb_raw:
+  - rgb/image_raw
+  - sensor_msgs/Image
+  - topic
+  rgb_rect:
+  - rgb/image_rect
+  - sensor_msgs/Image
+  - topic
+  rgb_rect_color:
+  - rgb/image_rect_color
+  - sensor_msgs/Image
+  - topic
+---
+'': # Driver2: kinect_aux ('' or '/' or '.'... if the first option doesn't work I will need a special case)
+# All the properties are supposed to be below the node namespace as a prerrequisite
+#Otherwise it's impossible to define them without the absolute path; which is not admissible
+#as the launchfile will determine the base namespace for everything. EXAMPLES:
+    #namespace/nodePrivateSpace/...dynamicReconfigureServer...
+    #namespace/nodePrivateSpace/path/topicORproperty
+#IMPORTANT: in case there's a huge necessity for a different namespace for the same driver; probably because of
+#a really bad structure or different nodes; there can be many pages (with their own namespaces) for a single driver
+  cur_tilt_angle:
+  - cur_tilt_angle
+  - std_msgs/Float64
+  - topic
+  tilt_angle:
+  - tilt_angle
+  - std_msgs/Float16
+  - topic
+  led_option:
+  - led_option
+  - std_msgs/UInt16
+  - topic
+  imu:
+  - imu
+  - sensor_msgs/Imu
+  - topic
+---
+'~': # Virtual properties
+#  image_mode:
+#  - camera/driver/image_mode
+#  - int
+#  - virtual
+  rgb/resolution:
+  - resol
+  - int
+  - virtual
+  rgb/frequency:
+  - freq
+  - int
+  - virtual
+#  depth_mode:
+#  - camera/driver/depth_mode
+#  - int
+#  - virtual
+  depth_resolution:
+  - resol
+  - int
+  - virtual
+  depth_frequency:
+  - freq
+  - int
+  - virtual
+## PARADIGM: title==what do I WANT to find || first field==what is the ORIGINAL element
+  newImageRaw:
+  - camera/driver/ir/image_raw
+  - int
+  - renaming
+##final_nameORpath:
+##  - common_nameORoriginal_path
+##  - int
+##  - renaming
+
+
+
+
+#  ALTERNATIVE_prop_data_skip:
+#  - camera/driver/data_skip
+#  - int
+#  - virtual
+#  - 0-10
+#  ALTERNATIVE_another_prop:
+#  - camera/driver/data_skip
+#  - int
+#  - virtual
+ # - uno
+ # - dos
+ # - tres
+#  ALTERNATIVE_no_boundariesA:
+#  - camera/driver/data_skip
+#  - int
+#  - virtual
+#  - 
+#  ALTERNATIVE_no_boundariesB:
+#  - camera/driver/data_skip
+#  - int
+#  - virtual
+#  - algo-algo
+...
+

@@ -1,0 +1,4 @@
+string topicName
+int64 newValue
+---
+int64 setAnswer

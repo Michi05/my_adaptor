@@ -1,0 +1,59 @@
+<launch>
+  <!-- For now, it is mandatory to include the absolute namespace if different than
+    root "/" because of a problem with the Kinect driver used.
+
+    The namespaces must be terminated with a slash character "/" and only this begins
+    with slash since it is the absolute one.
+    -->
+  <arg name="absolute_namespace" default="/" />
+  <arg name="main_file_basename" default="interface_test_main" />
+  <arg name="robot_ns" default="robot1" />
+  <arg name="pkg_location" default="$(find my_adaptor)" /> <!-- I can't use find $pkg_name in every place, so I use this for easier changing -->
+  <arg name="pkg_name" default="my_adaptor" />
+  <arg name="node_name" default="$(arg main_file_basename)" />
+
+  <arg name="camera_name" default="kinect1" />
+
+  <!-- start the nodes in the camera namespace -->
+  <group ns="$(arg camera_name)">
+	<!-- Always load driver first! Camera "Kinect1" -->
+
+<!-- 
+    <include file="$(find my_adaptor)/launch/adaptor_openni.launch">
+        <arg name="absolute_namespace" value="$(arg absolute_namespace)/$(arg camera_name)/" />
+    </include>
+    <node name="kinect_aux_node" pkg="kinect_aux" type="kinect_aux_node" required="true"/>
+	 -->
+
+    <!-- Alternative for the node-tag line
+<node launch-prefix="gdb -ex run -<borrarme>-args /usr/bin/python "  ... >  -->
+
+    <node name="$(arg node_name)" pkg="$(arg pkg_name)" type="$(arg main_file_basename).py" output="screen" required="true">
+
+        <!-- set private parameters -->
+        <param name="property_config_file" value="$(arg pkg_location)/propertyConfigFile.yaml" />
+    </node>
+  </group>
+
+
+
+
+     <!-- local machine already has a definition by default.
+       This tag overrides the default definition with
+       specific ROS_ROOT and ROS_PACKAGE_PATH values
+  <machine name="local_alt" address="localhost" default="true" ros-root="/u/user/ros/ros/" ros-package-path="/u/user/ros/ros-pkg" />
+
+ -->
+
+  <!-- pass args to the listener node
+
+    nodes can have their own remap args
+    <remap from="my_adaptor" to="imgA"/>
+
+    <node pkg="rospy_tutorials" type="listener" name="listener" args="- -test" respawn="true" />
+ -->
+
+
+
+
+</launch>
