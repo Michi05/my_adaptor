@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#########TODO?? ####### "# -*- coding: utf-8 -*-"
+#########Just in case the comments are translated to Spanish: # -*- coding: utf-8 -*-
 
 """ The following code implements an Adaptor Interface Node written in Python for Robot Operating System.
 This module is meant to provide communication between any application able to communicate with this node
@@ -382,7 +382,7 @@ class img_interface_node: ## This is the LISTENER for the layer ABOVE
                             Precondition: the names of the properties are the REMOTE names.
 
         @return The dictionary with the final configuration just in case there was any changes to it."""
-## TODO: be careful with the PPTY_REF of the parameters; it may be the same path/subParam/paramName
+## TODO: WATCH OUT: the PPTY_REF of the parameters could work as path/subParam/paramName
 #or the absolute path or just "paramName"...
         ## From REMOTE to LOCAL names:
         newConfig = {}
@@ -533,7 +533,6 @@ class img_interface_node: ## This is the LISTENER for the layer ABOVE
         @param valueType - the expected data type of the value to be set.
 
         @return True if success and False otherwise."""
-## TODO: rewrite this so it returns something else than true/false (or make everything coherent at least)
         propertyData = self.translator.interpret(localPropName)
         if propertyData == None:
             rospy.logerr("setFixedTypeProperty::Error: trying to set not found property.")
@@ -835,9 +834,9 @@ both translations) and several methods for translating."""
         ## Once the config is successfully loaded:
         for page in yamlConfig:
             if len(page) < 1:
-                rospy.logerr("WRONG CONFIG FORMAT!! Nothing found in this page. Exactly one entry expected.")
+                rospy.logerr("readYAMLConfig::Error: WRONG CONFIG FORMAT!! Nothing found in this page. Exactly one entry expected.")
             if len(page) > 1:
-                rospy.logerr("STRANGE CONFIG FORMAT!! More than one dictionary in a single page. Exactly one entry expected.")
+                rospy.logerr("readYAMLConfig::Error: STRANGE CONFIG FORMAT!! More than one dictionary in a single page. Exactly one entry expected.")
 # There is supposed to be only 1 dictionary but it
 #can be useful for the future making it with a loop
             for driverName in page:
@@ -862,19 +861,17 @@ both translations) and several methods for translating."""
         
         NOTE: Right now it checks if the topic exists... That may be avoidable if
         the multiplexor can be working anyway for future topics.
-        The method is supposed to be launched from the outside when loading; the
-        later the better.
+        The method is supposed to be launched from the outside when loading the
+        whole interface; the topics are suppossed to exist already.
 
         @param self - self object for the call.
         @param driverManager - the reference to the driverManager object to be
                                 used for the relocations.
         PRECONDITION: the driverManager must be already initialised
-        and the topics must be already published (at least by now)."""
+        and the topics must be already published (at least with this solution)."""
         dictionaryList = self.translations[1]
         for dictionary in dictionaryList:
             for renaming in [prop for prop in dictionary if dictionary[prop][PPTY_KIND]=="renaming"]:
-## TODO: document this with care; only topics can be renamed and the "renaming" keyword should be configurable
-## the type of topic is being obviously ignored; which can have secondary effects maybe?
                 rospy.loginfo("Automatically renaming from " + dictionary[renaming][PPTY_REF] + " to " + renaming)
                 translation = self.interpret(dictionary[renaming][PPTY_REF])
                 if translation != None and (translation[PPTY_KIND]=="topic"):
@@ -885,12 +882,14 @@ both translations) and several methods for translating."""
                     
                 try:
                     rospy.loginfo("Remaping from " + oldAddress + " to " + renaming)
-                    driverManager.relocateTopic(oldAddress, renaming)
+                    success = driverManager.relocateTopic(oldAddress, renaming)
                     ## If it was a name; the value needs to be updated in the translator
-                    if translation!= None and oldAddress == translation[PPTY_REF]:
+                    if success == True and translation!= None and oldAddress == translation[PPTY_REF]:
                         self.translator.updatePptyRef(dictionary[renaming][PPTY_REF], renaming)
+                    else
+                        rospy.logerr("cleanRenamings::Error: Unable to remap topic.")
                 except Exception as e:
-                    rospy.logerr("Exception during initial relocation: %s"%(e))
+                    rospy.logerr("cleanRenamings::Exception: initial relocation failed: %s"%(e))
                     return
                 else: ## In case there was no exception
                     del dictionary[renaming]
@@ -995,12 +994,11 @@ both translations) and several methods for translating."""
                 return (self.translations[0][dictIndex])
         return None
 
-## TODO: the following explanation is not clear at all.
     @staticmethod
     def get_basic_name(propName):
         """Static method that receives a string with any name or path
-        and returns the name after the last slash. That is:
-        propName = /rootDir/secondary/package/whatever/propName = propName/
+        and returns the basic name after the last slash. That is:
+        /rootDir/secondary/propName/ = /rootDir/secondary/propName = propName
 
         @param propName - the known complete name of a property (which may
                         include a relative path to diferentiate from others).
@@ -1258,10 +1256,10 @@ class manager3D:
 
         @return False if the first character is NOT a letter. True on success.
         Otherwise the error is unknown and exception is launched.'''
-        #TODO: The above is not true, the exception is still raised when the name is not valid.
         for word in newAddress.split('/'):
             if len(word) > 0 and word[0].isalpha() == False:
-                raise Exception("Impossible to relocate to a topic with first character", word[0], "in", word + ". Valid characters are a-z, A-Z.")
+                rospy.logerr("Impossible to relocate to a topic with first character " + word[0] + " in " + word + ". Valid characters are a-z, A-Z.")
+                return False
         myNamespace = '/'.join(rospy.get_namespace().split('/')[:-2])
         newIndex = len(self.createdMuxes)+1
         

@@ -122,7 +122,7 @@ def mainFunction(basename):
                 del globals()["ifcNode"]
             except:
                 pass
-            rospy.sleep(10)## TODO: Parametrizar los .sleep??
+            rospy.sleep(10)## TODO: Should times for .sleep be configurable??
             rospy.loginfo("Reinitializing Node")
         else:
             ## Everything is initialised and ready. Wait for requests:
